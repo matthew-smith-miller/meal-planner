@@ -45,16 +45,17 @@ export default function Home() {
                 <input type="date" />
               </span></div>
             <div className={styles.grid}>
-              <div className={styles.card}>Veg</div>
-              <div className={styles.card}>Vegan</div>
-              <div className={styles.card}>Paleo</div>
-              <div className={styles.card}>Low-carb</div>
-              <div className={styles.card}>Nick Offerman</div>
+              <DietButton diet="Vegetarian" />
+              <DietButton diet="Vegan" />
+              <DietButton diet="Pescatarian" />
+              <DietButton diet="Paleo" />
+              <DietButton diet="Low-Carb" />
+              <DietButton diet="Nick Offerman" />
             </div>
           </div>
           <div className={styles.description}>
-            Hi!
-        </div>
+            <GenerateButton />
+          </div>
           <div>
             Meal table
             <table>
@@ -88,4 +89,31 @@ export default function Home() {
       </main>
     </>
   )
+}
+
+function GenerateButton() {
+  function generateMeals() {
+    console.log('Generating meals');
+  }
+  return (
+    <button
+      className={styles.generateButton}
+      onClick={generateMeals}
+    >
+      Generate
+    </button>
+  )
+}
+
+function DietButton({ diet }) {
+  return (
+    <button className={styles.dietButton}>
+      {diet}
+    </button>
+  )
+}
+
+interface MealPlannerInputs {
+  date: Date;
+  diet: string;
 }
