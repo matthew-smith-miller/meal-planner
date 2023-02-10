@@ -51,6 +51,9 @@
   border-radius: var(--border-radius);
   background: rgba(var(--card-rgb), 0);
   border: 1px solid rgba(var(--card-border-rgb), 0);
+  text-align: center;
+  margin-left: 1rem;
+  margin-right: 1rem;
   transition: background 200ms, border 200ms;
 }
 
