@@ -1,11 +1,18 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import { useState } from 'react'
+import { MealPlannerInput } from './api/generate'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
+import { setDefaultResultOrder } from 'dns/promises'
 
 const inter = Inter({ subsets: ["latin"] })
 
 export default function Home() {
+  const [date, setDate] = useState();
+  const [result, setResult] = useState();
+  let meals: any;
+
   return (
     <>
       <Head>
@@ -26,7 +33,7 @@ export default function Home() {
               rel="noopener noreferrer"
             >
               <Image
-                src="/meel.png"
+                src="/meel-logo.png"
                 alt="Meel Logo"
                 className={styles.vercelLogo}
                 width={100}
@@ -45,6 +52,7 @@ export default function Home() {
                 <input type="date" />
               </span></div>
             <div className={styles.grid}>
+              <DietButton diet="No restrictions" />
               <DietButton diet="Vegetarian" />
               <DietButton diet="Vegan" />
               <DietButton diet="Pescatarian" />
@@ -57,53 +65,82 @@ export default function Home() {
             <GenerateButton />
           </div>
           <div>
-            Meal table
+            Meals
             <table>
-              <tr>
-                <td>
-                  Breakfast:
+              <tbody>
+                <tr>
+                  <td>
+                    Breakfast:
                 </td>
-                <td>
-                  ...
+                  <td>
+                    {result?.breakfast}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Lunch:
                 </td>
-              </tr>
-              <tr>
-                <td>
-                  Lunch:
+                  <td>
+                    {result?.lunch}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Dinner:
                 </td>
-                <td>
-                  ...
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  Dinner:
-                </td>
-                <td>
-                  ...
-                </td>
-              </tr>
+                  <td>
+                    {result?.dinner}
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
       </main>
     </>
   )
+
+  function GenerateButton() {
+    async function generateMeals() {
+      console.log('Generating meals');
+      try {
+        const response = await fetch('/api/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            input: {
+              date: new Date('2023-02-11'),
+              diet: 'Vegetarian',
+              adventurousness: 0.7
+            } as MealPlannerInput
+          }),
+        });
+        const data = await response.json();
+        if (response.status !== 200) {
+          throw data.error || new Error(`Failed with status ${response.status}!`)
+        }
+        console.log(`Succeeded with status ${response.status}`);
+        console.log(data);
+        meals = JSON.parse(data.result);
+        setResult(meals);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    return (
+      <button
+        className={styles.generateButton}
+        onClick={generateMeals}
+      >
+        Go
+      </button>
+    )
+  }
 }
 
-function GenerateButton() {
-  function generateMeals() {
-    console.log('Generating meals');
-  }
-  return (
-    <button
-      className={styles.generateButton}
-      onClick={generateMeals}
-    >
-      Generate
-    </button>
-  )
-}
 
 function DietButton({ diet }) {
   return (
@@ -111,9 +148,4 @@ function DietButton({ diet }) {
       {diet}
     </button>
   )
-}
-
-interface MealPlannerInputs {
-  date: Date;
-  diet: string;
 }
