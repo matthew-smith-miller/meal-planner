@@ -74,10 +74,15 @@ export default function Home() {
             </div>
           </div>
           <div className={styles.description}>
-            {prompt}
+            <GenerateButton /> <div id="spinner" className={styles.ldsDualRing}></div>
           </div>
-          <div className={styles.description}>
-            <GenerateButton />
+          <div>
+            <span className={styles.description}>
+              <span className={styles.headerText}>
+                Prompt:
+            </span>
+              {prompt}
+            </span>
           </div>
           <div>
             <table>
@@ -111,8 +116,8 @@ export default function Home() {
           </div>
         </div>
         <div className={styles.center}>
-          <a href="https://github.com/matthew-smith-miller/meal-planner">🛰️ repo </a><br />
-          <a href="https://www.linkedin.com/in/matthew-smith-miller/">👨🏽‍💻 matt</a>
+          <a href="https://github.com/matthew-smith-miller/meal-planner" target="blank">🛰️ repo </a><br />
+          <a href="https://www.linkedin.com/in/matthew-smith-miller/" target="blank">👨🏽‍💻 matt</a>
         </div>
       </main>
     </>
@@ -123,6 +128,10 @@ export default function Home() {
       if (!date || !diet) {
         alert('Please ensure you have selected a date and dietary restrictions!');
         return;
+      }
+      const spinner = document.getElementById('spinner');
+      if (spinner) {
+        spinner.style.display = 'inline-block';
       }
       const prompt = generatePrompt({
         date: new Date(date || ''),
@@ -147,6 +156,9 @@ export default function Home() {
         console.log(`Succeeded with status ${response.status}`);
         console.log(data);
         setResult(JSON.parse(data.result));
+        if (spinner) {
+          spinner.style.display = 'none';
+        }
       } catch (e) {
         console.error(e);
       }
