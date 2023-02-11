@@ -112,46 +112,20 @@
   position: relative;
 }
 
-.thirteen {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 75px;
-  height: 75px;
-  padding: 25px 10px;
-  margin-left: 16px;
-  transform: translateZ(0);
+.dietButton {
+  font-size: 0.6rem;
+  width: 6rem;
+  background: #fffde7;
+  color: #8fa3ad;
+  border: 0px;
   border-radius: var(--border-radius);
-  overflow: hidden;
-  box-shadow: 0px 2px 8px -1px #0000001a;
+  margin: 0.2rem;
+  padding: 0.5rem 0.6rem;
+  transition: background 200ms, border 200ms;
 }
 
-.thirteen::before,
-.thirteen::after {
-  content: '';
-  position: absolute;
-  z-index: -1;
-}
-
-/* Conic Gradient Animation */
-.thirteen::before {
-  animation: 6s rotate linear infinite;
-  width: 200%;
-  height: 200%;
-  background: var(--tile-border);
-}
-
-/* Inner Square */
-.thirteen::after {
-  inset: 0;
-  padding: 1px;
-  border-radius: var(--border-radius);
-  background: linear-gradient(
-    to bottom right,
-    rgba(var(--tile-start-rgb), 1),
-    rgba(var(--tile-end-rgb), 1)
-  );
-  background-clip: content-box;
+.active {
+  background: red;
 }
 
 /* Enable hover only on non-touch devices */
@@ -183,8 +157,8 @@
   }
 
   .grid {
-    grid-template-columns: 1fr;
-    margin-bottom: 120px;
+    grid-template-columns: 1fr 1fr 1fr;
+    margin-bottom: 20px;
     max-width: 320px;
     text-align: center;
   }
@@ -261,9 +235,6 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .vercelLogo {
-    filter: invert(1);
-  }
 
   .logo,
   .thirteen img {
