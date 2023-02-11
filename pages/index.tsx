@@ -73,7 +73,7 @@ export default function Home() {
                     Breakfast:
                 </td>
                   <td>
-                    {result?.breakfast}
+                    {meals?.breakfast}
                   </td>
                 </tr>
                 <tr>
@@ -81,7 +81,7 @@ export default function Home() {
                     Lunch:
                 </td>
                   <td>
-                    {result?.lunch}
+                    {meals?.lunch}
                   </td>
                 </tr>
                 <tr>
@@ -89,7 +89,7 @@ export default function Home() {
                     Dinner:
                 </td>
                   <td>
-                    {result?.dinner}
+                    {meals?.dinner}
                   </td>
                 </tr>
               </tbody>
@@ -142,7 +142,7 @@ export default function Home() {
 }
 
 
-function DietButton({ diet }) {
+function DietButton({ diet }: { diet: string }) {
   return (
     <button className={styles.dietButton}>
       {diet}

@@ -13,7 +13,7 @@ export type MealPlannerInput = {
   adventurousness: number;
 }
 
-export default async function (req, res) {
+export default async function (req: any, res: any) {
   if (!configuration.apiKey) {
     res.status(500).json({
       error: {
