@@ -10,8 +10,7 @@ const inter = Inter({ subsets: ["latin"] })
 
 export default function Home() {
   const [date, setDate] = useState();
-  const [result, setResult] = useState();
-  let meals: any;
+  const [result, setResult] = useState<{ breakfast: string, lunch: string, dinner: string }>();
 
   return (
     <>
@@ -73,7 +72,7 @@ export default function Home() {
                     Breakfast:
                 </td>
                   <td>
-                    {meals?.breakfast}
+                    {result?.breakfast}
                   </td>
                 </tr>
                 <tr>
@@ -81,7 +80,7 @@ export default function Home() {
                     Lunch:
                 </td>
                   <td>
-                    {meals?.lunch}
+                    {result?.lunch}
                   </td>
                 </tr>
                 <tr>
@@ -89,7 +88,7 @@ export default function Home() {
                     Dinner:
                 </td>
                   <td>
-                    {meals?.dinner}
+                    {result?.dinner}
                   </td>
                 </tr>
               </tbody>
@@ -123,8 +122,7 @@ export default function Home() {
         }
         console.log(`Succeeded with status ${response.status}`);
         console.log(data);
-        meals = JSON.parse(data.result);
-        setResult(meals);
+        setResult(JSON.parse(data.result));
       } catch (e) {
         console.error(e);
       }
