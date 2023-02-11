@@ -1,6 +1,6 @@
 :root {
   --max-width: 1100px;
-  --border-radius: 30px;
+  --border-radius: 20px;
   --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
     'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
     'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
@@ -72,12 +72,22 @@ body {
 }
 
 a {
-  color: inherit;
+  color: #fdd835;
   text-decoration: none;
 }
 
 div {
-  border: 1px solid white;
+  padding: 0.4rem;
+}
+
+input {
+  font-family: var(--font-mono);
+  font-size: 1.0rem;
+}
+
+select {
+  font-family: var(--font-mono);
+  font-size: 1.0rem;
 }
 
 @media (prefers-color-scheme: dark) {

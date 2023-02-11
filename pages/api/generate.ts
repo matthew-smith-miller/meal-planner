@@ -1,17 +1,9 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next'
 import { Configuration, OpenAIApi } from 'openai';
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
-
-export type MealPlannerInput = {
-  date: Date;
-  diet: string;
-  adventurousness: number;
-}
 
 export default async function (req: any, res: any) {
   if (!configuration.apiKey) {
@@ -23,11 +15,11 @@ export default async function (req: any, res: any) {
     return;
   }
 
-  const input = req.body.input || undefined;
-  if (!input) {
+  const prompt = req.body.prompt || undefined;
+  if (!prompt) {
     res.status(400).json({
       error: {
-        message: "Please select a date"
+        message: "An error occurred - please try again"
       }
     });
     return;
@@ -37,8 +29,8 @@ export default async function (req: any, res: any) {
     const completion = await openai.createCompletion({
       model: "text-davinci-003",
       max_tokens: 2048,
-      prompt: generatePrompt(input),
-      temperature: setTemperature(input)
+      prompt: prompt,
+      temperature: 0.8,
     });
     res.status(200).json({
       result: completion.data.choices[0].text
@@ -46,14 +38,4 @@ export default async function (req: any, res: any) {
   } catch (e) {
     console.error(e);
   }
-}
-
-function generatePrompt(input: MealPlannerInput) {
-  const diet = 'Meals should be vegetarian.';
-  const effort = 'easy'
-  return `Suggest three ${effort} meals - breakfast, lunch, and dinner. ${diet} Return a JSON object with properties "breakfast", "lunch", and "dinner"`;
-}
-
-function setTemperature(input: MealPlannerInput) {
-  return 0.4;
 }

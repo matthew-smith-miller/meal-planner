@@ -1,16 +1,26 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import { useState } from 'react'
-import { MealPlannerInput } from './api/generate'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
-import { setDefaultResultOrder } from 'dns/promises'
 
 const inter = Inter({ subsets: ["latin"] })
 
 export default function Home() {
-  const [date, setDate] = useState();
+  const [date, setDate] = useState<string>();
+  const [diet, setDiet] = useState<string>();
   const [result, setResult] = useState<{ breakfast: string, lunch: string, dinner: string }>();
+  const [prompt, setPrompt] = useState<string>('---');
+  const diets = [
+    '',
+    'No restrictions',
+    'Vegetarian',
+    'Vegan',
+    'Pescatarian',
+    'Paleo',
+    'Low-Carb',
+    'Ron Swanson'
+  ];
 
   return (
     <>
@@ -35,59 +45,64 @@ export default function Home() {
                 src="/meel-logo.png"
                 alt="Meel Logo"
                 className={styles.vercelLogo}
-                width={100}
-                height={24}
+                width={99}
+                height={41}
                 priority
               />
             </a>
           </div>
         </div>
 
-        <div>Container
+        <div>
           <div>
-            Controls
-            <div>Date picker
-              <span>
-                <input type="date" />
-              </span></div>
-            <div className={styles.grid}>
-              <DietButton diet="No restrictions" />
-              <DietButton diet="Vegetarian" />
-              <DietButton diet="Vegan" />
-              <DietButton diet="Pescatarian" />
-              <DietButton diet="Paleo" />
-              <DietButton diet="Low-Carb" />
-              <DietButton diet="Nick Offerman" />
+            <div className={styles.headerText}>Date
+              <span className={styles.userInput}>
+                <input
+                  type="date"
+                  onChange={(e) => setDate(e.target.value)}
+                />
+              </span>
             </div>
+            <div className={styles.headerText}>Restrictions
+              <span className={styles.userInput}>
+                <select onChange={(e) => setDiet(e.target.value)}>
+                  {diets.map((d) => (
+                    <option value={d} key={d}>{d}</option>
+                  ))}
+                </select>
+              </span>
+            </div>
+          </div>
+          <div className={styles.description}>
+            {prompt}
           </div>
           <div className={styles.description}>
             <GenerateButton />
           </div>
           <div>
-            Meals
             <table>
               <tbody>
                 <tr>
-                  <td>
-                    Breakfast:
+                  <td className={styles.headerText}>
+                    Breakfast
                 </td>
-                  <td>
+                  <td className={styles.mealOption}>
                     {result?.breakfast}
                   </td>
                 </tr>
                 <tr>
-                  <td>
-                    Lunch:
+                  <td className={styles.headerText}>
+                    Lunch
                 </td>
-                  <td>
+                  <td className={styles.mealOption}>
                     {result?.lunch}
                   </td>
                 </tr>
                 <tr>
-                  <td>
-                    Dinner:
+                  <td className={styles.headerText}>
+                    Dinner
                 </td>
-                  <td>
+                  <td className={styles.mealOption}>
                     {result?.dinner}
                   </td>
                 </tr>
@@ -95,13 +110,26 @@ export default function Home() {
             </table>
           </div>
         </div>
+        <div className={styles.center}>
+          <a href="https://github.com/matthew-smith-miller/meal-planner">🛰️ repo </a><br />
+          <a href="https://www.linkedin.com/in/matthew-smith-miller/">👨🏽‍💻 matt</a>
+        </div>
       </main>
     </>
   )
 
   function GenerateButton() {
     async function generateMeals() {
-      console.log('Generating meals');
+      if (!date || !diet) {
+        alert('Please ensure you have selected a date and dietary restrictions!');
+        return;
+      }
+      const prompt = generatePrompt({
+        date: new Date(date || ''),
+        diet: diet || ''
+      });
+      setPrompt(prompt);
+
       try {
         const response = await fetch('/api/generate', {
           method: 'POST',
@@ -109,11 +137,7 @@ export default function Home() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            input: {
-              date: new Date('2023-02-11'),
-              diet: 'Vegetarian',
-              adventurousness: 0.7
-            } as MealPlannerInput
+            prompt: prompt
           }),
         });
         const data = await response.json();
@@ -133,17 +157,36 @@ export default function Home() {
         className={styles.generateButton}
         onClick={generateMeals}
       >
-        Go
+        Generate ⚡
       </button>
     )
   }
+
+  function generatePrompt(input: MealPlannerInput) {
+    const opening = 'Suggest three meals - breakfast, lunch, and dinner.'
+    const diet = processDiet(input.diet);
+    const effort = processEffort(input.date);
+    const closing = 'Return a JSON object with properties "breakfast", "lunch", and "dinner".'
+    return `${opening} ${diet} ${effort} ${closing}`;
+  }
+
+  function processEffort(date: Date) {
+    if ([0, 6].includes(date.getUTCDay())) {
+      return 'This meal plan is for a weekend, so the meals can be a bit more complex.';
+    }
+    return 'This meal plan is for a weekday, so the meals should be easy to prepare.'
+  }
+
+  function processDiet(diet: string) {
+    return diet === 'No restrictions'
+      ? 'I have no dietary restrictions.'
+      : diet === 'Ron Swanson'
+        ? 'Please include as much meat in the meal suggestions as possible.'
+        : `My diet is ${diet.toLowerCase()}.`
+  }
 }
 
-
-function DietButton({ diet }: { diet: string }) {
-  return (
-    <button className={styles.dietButton}>
-      {diet}
-    </button>
-  )
+interface MealPlannerInput {
+  date: Date;
+  diet: string
 }
