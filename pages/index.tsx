@@ -33,7 +33,7 @@ export default function Home() {
       <main className={styles.main}>
         <div className={styles.description}>
           <p>
-            Welcome to the Meel meal planner
+            Welcome to the Meel meal planner, a simple demonstration app built on top of the OpenAI apis
           </p>
           <div>
             <a
